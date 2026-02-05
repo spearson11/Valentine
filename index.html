@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>💌 For Solene</title>
+  <style>
+    :root{
+      --bg1:#fff1f5;
+      --bg2:#ffe4ec;
+      --card:#ffffffcc;
+      --text:#2b2b2b;
+      --accent:#ff2d55;
+      --accent2:#ff8fab;
+      --shadow: 0 20px 60px rgba(0,0,0,.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: radial-gradient(1200px 800px at 20% 10%, var(--bg2), transparent 60%),
+                  radial-gradient(1000px 700px at 80% 30%, #ffd6e5, transparent 60%),
+                  linear-gradient(135deg, var(--bg1), #fff);
+      overflow:hidden;
+    }
+    .wrap{
+      width:min(920px, 92vw);
+      display:grid;
+      gap:18px;
+      grid-template-columns: 1.2fr .8fr;
+      align-items:stretch;
+    }
+    @media (max-width:860px){
+      .wrap{grid-template-columns:1fr}
+    }
+    .card{
+      position:relative;
+      padding:24px 22px;
+      border-radius:24px;
+      background:var(--card);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,.65);
+      overflow:hidden;
+    }
+    .stamp{
+      position:absolute;
+      top:18px; right:18px;
+      width:92px; height:110px;
+      border-radius:18px;
+      background: linear-gradient(135deg, #fff, #ffe4ec);
+      border:2px dashed rgba(255,45,85,.35);
+      display:grid;
+      place-items:center;
+      transform: rotate(6deg);
+      box-shadow: 0 10px 25px rgba(0,0,0,.08);
+      user-select:none;
+    }
+    .stamp span{font-size:34px}
+    h1{
+      margin:6px 0 10px;
+      font-size: clamp(28px, 3.5vw, 40px);
+      line-height:1.1;
+      letter-spacing:-.02em;
+    }
+    .sub{
+      margin:0 0 14px;
+      font-size: clamp(15px, 1.6vw, 17px);
+      opacity:.92;
+      max-width: 52ch;
+    }
+    .apology{
+      margin:0 0 14px;
+      font-size: clamp(15px, 1.6vw, 17px);
+      opacity:.95;
+    }
+    .apology b{color:var(--accent)}
+    .details{
+      margin-top:14px;
+      padding:14px 14px;
+      border-radius:18px;
+      background: rgba(255,255,255,.7);
+      border:1px solid rgba(255,45,85,.12);
+    }
+    .details b{color:var(--accent)}
+    .playground{
+      position:relative;
+      min-height: 340px;
+      border-radius:22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.55));
+      border:1px solid rgba(255,45,85,.10);
+      overflow:hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.5);
+    }
+    .note{
+      padding:18px 18px 0;
+      font-size:14px;
+      opacity:.85;
+    }
+    .btn{
+      position:absolute;
+      padding:12px 18px;
+      border-radius:999px;
+      border:none;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow: 0 12px 28px rgba(0,0,0,.14);
+      transition: transform .08s ease;
+      user-select:none;
+      touch-action: manipulation;
+    }
+    .btn:active{transform: scale(.98)}
+    .yes{
+      background: linear-gradient(135deg, var(--accent), #ff5d7a);
+      color:white;
+    }
+    .no{
+      background: linear-gradient(135deg, #2b2b2b, #5a5a5a);
+      color:white;
+      opacity:.92;
+    }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(255,240,246,.92);
+      backdrop-filter: blur(6px);
+      z-index: 50;
+      padding:18px;
+    }
+    .overlay.show{display:flex}
+    .modal{
+      width:min(560px, 92%);
+      background:white;
+      border-radius:24px;
+      padding:18px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(255,45,85,.14);
+      text-align:center;
+    }
+    .modal h2{margin:10px 0 8px; font-size:26px}
+    .modal p{margin:0 0 10px; opacity:.92}
+    .img{
+      width:100%;
+      aspect-ratio: 16/10;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(0,0,0,.06);
+      background: #fff7fb;
+      display:grid;
+      place-items:center;
+      position:relative;
+    }
+    .img img{
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .close{
+      margin-top:12px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color:white;
+      border:none;
+      font-weight:800;
+      padding:11px 16px;
+      border-radius:999px;
+      cursor:pointer;
+    }
+
+    .confetti{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:60;
+    }
+    .piece{
+      position:absolute;
+      width:10px; height:14px;
+      opacity:.9;
+      top:-20px;
+      transform: rotate(0deg);
+      animation: fall linear forwards;
+      border-radius:3px;
+    }
+    @keyframes fall{
+      to{
+        transform: translateY(420px) rotate(540deg);
+        opacity: 1;
+      }
+    }
+    .heart{
+      position:absolute;
+      font-size:18px;
+      opacity:.25;
+      animation: float 10s linear infinite;
+      user-select:none;
+      pointer-events:none;
+    }
+    @keyframes float{
+      from{transform: translateY(20px)}
+      to{transform: translateY(-420px)}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <section class="card">
+      <div class="stamp" aria-hidden="true"><span>💘</span></div>
+
+      <h1>Solene, will you be my Valentine?</h1>
+
+      <p class="apology">
+        <b>I’m sorry about messing up once again, I don’t deserve you..</b>
+        I love you, and I want to make things right — properly.
+      </p>
+
+      <p class="sub">
+        So here’s my official invite: let’s take a little weekend getaway in the countryside.
+        Just you and me, no distractions, no noise — only relaxing time together.
+      </p>
+
+      <div class="details">
+        <div><b>Plan:</b> A cozy countryside weekend — slow mornings, long walks, warm food, and us.</div>
+        <div style="margin-top:6px;"><b>Vibe:</b> Peaceful, affectionate, and fully present.</div>
+        <div style="margin-top:6px;"><b>Rule:</b> Phones down (except for photos of you looking stunning).</div>
+      </div>
+
+      <p class="sub" style="margin-top:14px; opacity:.82;">
+        Tap a button below… if you can catch it 😉
+      </p>
+    </section>
+
+    <section class="card">
+      <div class="playground" id="playground" aria-label="Buttons playground">
+        <div class="note">Catch one 👇</div>
+        <button class="btn yes" id="yesBtn" aria-label="Yes">YES 💖</button>
+        <button class="btn no" id="noBtn" aria-label="No">NO 🙈</button>
+
+        <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Celebration">
+          <div class="modal">
+            <div class="img">
+              <!-- English countryside image -->
+              <img id="celebrationImg"
+                   alt="English countryside"
+                   src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1400&q=80" />
+            </div>
+            <h2>YAYYYYY 🎉</h2>
+            <p>It’s a date. Countryside weekend with no distractions — just us 💘</p>
+            <p><em>I hope the coding was not too embarrassing..</em> 😅</p>
+            <button class="close" id="closeBtn">Close</button>
+          </div>
+        </div>
+
+        <div class="confetti" id="confetti"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const playground = document.getElementById('playground');
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn  = document.getElementById('noBtn');
+
+    const overlay = document.getElementById('overlay');
+    const closeBtn = document.getElementById('closeBtn');
+    const confetti = document.getElementById('confetti');
+
+    const state = {
+      yes: { x: 40, y: 110, vx: 1.35, vy: 1.05 },
+      no:  { x: 190, y: 220, vx: -1.15, vy: 1.25 },
+      running: true
+    };
+
+    function boundsFor(btn){
+      const pad = 12;
+      const rect = playground.getBoundingClientRect();
+      const w = btn.offsetWidth, h = btn.offsetHeight;
+      return {
+        minX: pad,
+        minY: 54,
+        maxX: rect.width - w - pad,
+        maxY: rect.height - h - pad
+      };
+    }
+
+    function step(){
+      if(!state.running) return;
+      moveBtn(yesBtn, state.yes);
+      moveBtn(noBtn, state.no);
+      requestAnimationFrame(step);
+    }
+
+    function moveBtn(btn, obj){
+      const b = boundsFor(btn);
+      obj.x += obj.vx;
+      obj.y += obj.vy;
+
+      if(obj.x <= b.minX || obj.x >= b.maxX) obj.vx *= -1;
+      if(obj.y <= b.minY || obj.y >= b.maxY) obj.vy *= -1;
+
+      obj.x = Math.max(b.minX, Math.min(b.maxX, obj.x));
+      obj.y = Math.max(b.minY, Math.min(b.maxY, obj.y));
+
+      btn.style.transform = `translate(${obj.x}px, ${obj.y}px)`;
+    }
+
+    function dodge(btn, obj, strength=1.6){
+      btn.addEventListener('pointermove', (e)=>{
+        const r = btn.getBoundingClientRect();
+        const cx = r.left + r.width/2;
+        const cy = r.top + r.height/2;
+        const dx = cx - e.clientX;
+        const dy = cy - e.clientY;
+        const mag = Math.max(1, Math.hypot(dx, dy));
+        obj.vx += (dx / mag) * 0.08 * strength;
+        obj.vy += (dy / mag) * 0.08 * strength;
+
+        const cap = 2.6;
+        obj.vx = Math.max(-cap, Math.min(cap, obj.vx));
+        obj.vy = Math.max(-cap, Math.min(cap, obj.vy));
+      });
+    }
+
+    dodge(yesBtn, state.yes, 1.1);
+    dodge(noBtn, state.no, 2.0);
+
+    function placeInitial(){
+      yesBtn.style.transform = `translate(${state.yes.x}px, ${state.yes.y}px)`;
+      noBtn.style.transform  = `translate(${state.no.x}px, ${state.no.y}px)`;
+    }
+    placeInitial();
+    requestAnimationFrame(step);
+
+    function popConfetti(count=120){
+      confetti.innerHTML = "";
+      const w = playground.clientWidth;
+
+      for(let i=0;i<count;i++){
+        const d = document.createElement('div');
+        d.className = 'piece';
+        const left = Math.random() * w;
+        const delay = Math.random() * 0.4;
+        const dur = 1.6 + Math.random() * 1.2;
+        const hue = Math.floor(Math.random() * 360);
+
+        d.style.left = left + "px";
+        d.style.animationDuration = dur + "s";
+        d.style.animationDelay = delay + "s";
+        d.style.background = `hsl(${hue} 90% 60%)`;
+        d.style.transform = `rotate(${Math.random()*180}deg)`;
+
+        confetti.appendChild(d);
+      }
+      setTimeout(()=>{ confetti.innerHTML = ""; }, 3200);
+    }
+
+    yesBtn.addEventListener('click', ()=>{
+      overlay.classList.add('show');
+      popConfetti();
+      state.running = false;
+    });
+
+    closeBtn.addEventListener('click', ()=>{
+      overlay.classList.remove('show');
+      state.running = true;
+      requestAnimationFrame(step);
+    });
+
+    overlay.addEventListener('click', (e)=>{
+      if(e.target === overlay){
+        overlay.classList.remove('show');
+        state.running = true;
+        requestAnimationFrame(step);
+      }
+    });
+
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape' && overlay.classList.contains('show')){
+        overlay.classList.remove('show');
+        state.running = true;
+        requestAnimationFrame(step);
+      }
+    });
+
+    for(let i=0;i<10;i++){
+      const h = document.createElement('div');
+      h.className = 'heart';
+      h.textContent = (Math.random() > .5) ? '❤' : '💗';
+      h.style.left = (Math.random()*90 + 5) + '%';
+      h.style.bottom = (-Math.random()*60) + 'px';
+      h.style.animationDuration = (8 + Math.random()*8) + 's';
+      h.style.fontSize = (14 + Math.random()*14) + 'px';
+      playground.appendChild(h);
+    }
+  </script>
+</body>
+</html>
